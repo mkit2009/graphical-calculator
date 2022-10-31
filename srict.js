@@ -1,6 +1,9 @@
 let canvas = document.getElementById("canvas")
 let c = canvas.getContext("2d")
 
+let graphs = []
+let indicators = []
+
 let view = {
     x: 0,
     y: 0,
@@ -50,6 +53,28 @@ let functions = {
     }
 }
 
+class Function {
+    constructor(cb, variables = {}){
+        this.cb = cb
+        this.variables = {...variables}
+    }
+    getY(variables = {}){
+
+    }
+    getRequiredVaribles(){
+        return this.variables
+    }
+    static createCustom(name = "", input = "", variables = {}){
+        let definition = "f("
+        let vars = keys(variables)
+        for (let i in vars)
+            definition += vars[i] + (i - 0 < vars.length - 1 ? ", " : "")
+        definition += ") = " + input
+        let fn = math.evaluate(definition)
+        functions[name] = new Function(fn, variables)
+    }
+}
+
 let operands = {
     midpoint(graph1, graph2, color) {
         let graph = new Graph("undef", { color })
@@ -60,14 +85,30 @@ let operands = {
     },
 }
 
+function distance(point1, point2) {
+    let x = point2.x - point1.x
+    let y = point2.y - point1.y
+    let c = Math.sqrt(x ** 2 + y ** 2)
+    return { x, y, c, fx: x / c, fy: y / c }
+}
+
 class Graph {
-    constructor(type, data) {
+    constructor(type = "power", data = {}) {
         this.type = type
-        this.data = data
+        this.data = { ...data }
         this.curve = []
+        this.booleans = {
+            abs: {
+                x: true,
+                y: false,
+            }
+        }
     }
     getY(x) {
-        return functions[this.type](x, this.data)
+        x = this.booleans.abs.x ? Math.abs(x) : x
+        let y = functions[this.type](x, this.data)
+        y = this.booleans.abs.y ? Math.abs(y) : y
+        return y
     }
     draw() {
         c.rect(view.x, view.y, view.width, view.height)
@@ -110,11 +151,38 @@ class Graph {
             }
         }
     }
+    static closest(point = {}) {
+        if (graphs.length == 0) return null
+        let closest = { graphIdx: 0, graphVert: 0, distance: Infinity }
+        for (let i in graphs) {
+            for (let j in graphs[i].curve) {
+                let tempPoint = {x: point.x, y: (view.height - point.y) * -1}
+                let dist = distance(tempPoint, graphs[i].curve[j]).c
+                if (dist < closest.distance){
+                    closest.graphIdx = i - 0
+                    closest.graphVert = j - 0
+                    closest.distance = dist
+                }
+            }
+        }
+        return closest
+    }
+}
+
+class Indicator {
+    constructor(graphData){
+        this.color = graphs[graphData.graphIdx].data.color
+        this.point = {
+            x: graphs[graphData.graphIdx].curve[graphData.graphVert].x,
+            y: view.height +  graphs[graphData.graphIdx].curve[graphData.graphVert].y,
+        }
+    }
 }
 
 let graph = new Graph("sin", { a: 1, b: 5, color: "red" })
 let graph2 = new Graph("power", { a: 3, c: 0, color: "magenta" })
 let graph4 = new Graph("quadratic", { a: 1, b: 0, c: 0, color: "yellow" })
+graphs.push(graph)
 
 function main() {
     Graph.drawTable()
@@ -149,21 +217,29 @@ canvas.addEventListener("mousedown", e => {
 canvas.addEventListener("mouseup", e => {
     mouse.hold = -1
 })
-function mouseData() {
+function mouseUpdate() {
     let redraw = false
     if (mouse.hold >= 0) {
         mouse.hold++
         view.zeroX -= mouse.lastX - mouse.x
         view.zeroY += mouse.lastY - mouse.y
-        redraw = true
+        if (mouse.lastX != mouse.x || mouse.lastY != mouse.y)
+            redraw = true
+    }
+    if (mouse.hold == 1 && mouse.lastX == mouse.x && mouse.lastY == mouse.y){
+        indicators.push(new Indicator(Graph.closest(mouse)))
     }
     if (mouse.wheel != 0 && view.scaleSize - mouse.wheel * 5.37 * 5 > 0) {
-        view.scaleSize -= mouse.wheel * 5.37
+        view.scaleSize -= mouse.wheel * 5.37  * Math.sqrt(Math.sqrt(view.scaleSize))
+        if (view.scaleSize < 28) view.scaleSize = 28
         redraw = true
     }
     mouse.lastX = mouse.x
     mouse.lastY = mouse.y
     mouse.wheel = 0
-    if (redraw)
+    if (redraw){
+        console.log("xcdvsd")
+        indicators = []
         main()
-} setInterval(mouseData, 1000 / 60)
+    }
+} setInterval(mouseUpdate, 1000 / 60)
