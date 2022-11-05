@@ -111,6 +111,7 @@ class Graph {
     }
     static create(name = "myGraph", type = "power", variables = [], color = "red") {
         graphs[name] = new Graph(type, variables, color)
+        main()
     }
     static unitSize() {
         return view.scaleValue / view.scaleSize
