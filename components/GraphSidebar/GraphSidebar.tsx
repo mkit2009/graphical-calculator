@@ -2,6 +2,44 @@ import React, { useState, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import Popup from "../Popup/Popup";
 import { AiOutlineDelete } from "react-icons/ai";
+import { useMainContext } from "../../src/context/mainContext";
+import { PopupDataArray } from "../Popup/Popup";
+
+const GRAPH_POPUP_DATA: PopupDataArray[] = [
+  {
+    name: "Graph name",
+    type: "text",
+    placeholder: "Amazing function...",
+    dataType: "string",
+  },
+  {
+    name: "Graph funciton",
+    type: "text",
+    placeholder: "Amazing function...",
+    dataType: "string",
+  },
+  {
+    name: "Graph color",
+    type: "text",
+    placeholder: "Amazing function...",
+    dataType: "string",
+  },
+];
+
+const FUNCTION_POPUP_DATA: PopupDataArray[] = [
+  {
+    name: "Function name",
+    placeholder: "Amazing function...",
+    type: "text",
+    dataType: "string",
+  },
+  {
+    name: "Functions right side",
+    placeholder: 'sin(x + "a") + "b"',
+    type: "text",
+    dataType: "string",
+  },
+];
 
 const StyledDiv = ({ title }: { title: string }) => {
   return (
@@ -17,24 +55,66 @@ const StyledDiv = ({ title }: { title: string }) => {
 };
 
 function GraphSidebar() {
-  const [graphs, setGraphs] = useState<
-    {
-      name: string; // Name of graph, key
-      function: string; // Name of function which will graph use
-      arguments: number[];
-      color: string;
-    }[]
-  >([]);
+  const {
+    functionsArray,
+    graphsArray,
+    setFunctionsArray,
+    setGraphsArray,
+    newFunction,
+    newGraph,
+  } = useMainContext();
 
-  const [functions, setFunctions] = useState([]);
+  // console.log(newFunction);
 
-  const popupRef = useRef<HTMLDialogElement>(null);
+  const graphPopupRef = useRef<HTMLDialogElement>(null);
+  const functionsPopupRef = useRef<HTMLDialogElement>(null);
 
   const handleNewGraph = () => {
-    if (popupRef.current) {
-      popupRef.current.showModal();
+    if (graphPopupRef.current) {
+      graphPopupRef.current.showModal();
     }
   };
+
+  const handleNewFunction = () => {
+    if (functionsPopupRef.current) {
+      functionsPopupRef.current.showModal();
+    }
+  };
+
+  const handleFunctionForm = (
+    inputArray: {
+      value: string;
+    }[]
+  ) => {
+    // Grabs the name from input form name
+    const name = inputArray[0].value;
+    // Grab raw function from input form
+    const functionString = inputArray[1].value;
+    // Creates variables where indexes of " will be stored
+    const variables: number[] = [];
+    // Variebles result is object with string keys and number values, the script is dependand on this structure
+    const variablesResult: { [index: string]: number } = {};
+    // Pushes all the " indexes to variable array
+    for (let i = 0; i < functionString.length; i++) {
+      if (functionString[i] === '"') variables.push(i);
+    }
+    // Go through all even indexes of variable array to get content between them
+    for (let i = 0; i < variables.length; i += 2) {
+      let string = "";
+      // Get the content between and push it to string
+      for (let k = 0; k < variables[i + 1] - variables[i] - 1; k++) {
+        string += functionString[variables[i] + 1 + k];
+      }
+      // Set the default value of key to 0
+      variablesResult[string] = 0;
+    }
+    if (newFunction) {
+      newFunction(name, functionString.replaceAll('"', ""), variablesResult);
+      // newGraph("ahojoj", "sine", [5], "blue");
+    }
+  };
+
+  const handleGraphForm = () => {};
 
   return (
     <>
@@ -48,10 +128,10 @@ function GraphSidebar() {
           hover:rotate-90"
             />
           </div>
-          {graphs.map((item, index) => {
+          {graphsArray.map((item, index) => {
             return <StyledDiv title={item.name} key={index} />;
           })}
-          {graphs.length === 0 && (
+          {graphsArray.length === 0 && (
             <p className="text-white">You have no graphs yet.</p>
           )}
         </div>
@@ -59,20 +139,32 @@ function GraphSidebar() {
           <div className="flex items-center gap-3 text-fontColor text-2xl mb-2">
             <p>Your Functions</p>
             <AiOutlinePlus
+              onClick={handleNewFunction}
               className="text-4xl self-end rounded-full cursor-pointer duration-100 hover:bg-barelyVisibleWhite
           hover:rotate-90"
             />
           </div>
-          {functions.map((item, index) => {
-            return <StyledDiv title={item} key={index} />;
+          {functionsArray.map((item, index) => {
+            return <StyledDiv title={item.name} key={index} />;
           })}
-          {functions.length === 0 && (
+          {functionsArray.length === 0 && (
             <p className="text-white">You have no functions yet.</p>
           )}
         </div>
       </aside>
       <>
-        <Popup ref={popupRef} closeFunction={() => popupRef.current?.close()} />
+        <Popup
+          ref={graphPopupRef}
+          submitAction={handleGraphForm}
+          closeFunction={() => graphPopupRef.current?.close()}
+          dataArray={GRAPH_POPUP_DATA}
+        />
+        <Popup
+          ref={functionsPopupRef}
+          submitAction={handleFunctionForm}
+          closeFunction={() => functionsPopupRef.current?.close()}
+          dataArray={FUNCTION_POPUP_DATA}
+        />
       </>
     </>
   );
