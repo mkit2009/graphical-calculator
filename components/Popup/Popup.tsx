@@ -10,6 +10,7 @@ import { useMainContext } from "../../src/context/mainContext";
 import { graphSchema, functionSchema } from "../../src/schemas";
 import { GRAPH_POPUP_DATA, FUNCTION_POPUP_DATA } from "./PopupData";
 import { InputOptions, InputText } from "./PopupInputs";
+import ColorPicker from "../ColorPicker/ColorPicker";
 
 const graphInitalValues: { [index: string]: "" } = {};
 for (let item of GRAPH_POPUP_DATA) {
@@ -65,6 +66,7 @@ const Popup = forwardRef(function Popup(
     errors,
     touched,
     resetForm,
+    setValues,
   } = useFormik({
     initialValues: formikInitalData.initalValues as {
       [index: string]: "";
@@ -74,6 +76,8 @@ const Popup = forwardRef(function Popup(
   });
 
   const { functionsArray, graphsArray } = useMainContext();
+
+  console.log(values);
 
   return (
     <dialog
@@ -88,6 +92,7 @@ const Popup = forwardRef(function Popup(
           closeFunction();
         }}
       />
+
       <form
         className="flex flex-col gap-4"
         onSubmit={handleSubmit}
@@ -175,11 +180,11 @@ const Popup = forwardRef(function Popup(
 
             return (
               <React.Fragment key={index}>
-                {selectData ? (
+                {selectData !== undefined ? (
                   <InputOptions
                     title={item.name}
                     placeholder={item.placeholder}
-                    key={index}
+                    key={index + "options"}
                     parametresArray={functionsArray}
                     parametresValue={values["number"]}
                     selectData={selectData || []}
@@ -192,11 +197,11 @@ const Popup = forwardRef(function Popup(
                     }
                     touched={touched[item.name.replaceAll(" ", "") + "-name"]}
                   />
-                ) : (
+                ) : item.placeholder !== "" ? (
                   <InputText
                     title={item.name}
                     placeholder={item.placeholder}
-                    key={index}
+                    key={index + "text"}
                     value={values[item.name.replaceAll(" ", "") + "-name"]}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -205,6 +210,18 @@ const Popup = forwardRef(function Popup(
                       undefined
                     }
                     touched={touched[item.name.replaceAll(" ", "") + "-name"]}
+                  />
+                ) : (
+                  <ColorPicker
+                    title={item.name}
+                    value={values[item.name.replaceAll(" ", "") + "-name"]}
+                    error={
+                      errors[item.name.replaceAll(" ", "") + "-name"] ||
+                      undefined
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    setValueFunction={setValues}
                   />
                 )}
               </React.Fragment>

@@ -24,8 +24,8 @@ export const GRAPH_POPUP_DATA: PopupDataInterface[] = [
   },
   {
     name: "Graph color",
-    type: "text",
-    placeholder: "Amazing function...",
+    type: "color",
+    placeholder: "",
     dataType: "string",
   },
 ];
