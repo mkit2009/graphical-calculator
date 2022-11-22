@@ -24,6 +24,14 @@ interface MainContextInterface {
       | undefined
     >
   >;
+  deleteGraph: ((name: string) => void) | undefined;
+  setDeleteGraph: React.Dispatch<
+    React.SetStateAction<((name: string) => void) | undefined>
+  >;
+  deleteFunction: ((name: string) => void) | undefined;
+  setDeleteFunction: React.Dispatch<
+    React.SetStateAction<((name: string) => void) | undefined>
+  >;
 }
 
 const MainContext = createContext<MainContextInterface>(
@@ -41,6 +49,13 @@ const MainContextWrapper = ({ children }: { children: React.ReactElement }) => {
     | undefined
   >(undefined);
 
+  const [deleteGraph, setDeleteGraph] = useState<
+    ((name: string) => void) | undefined
+  >(undefined);
+  const [deleteFunction, setDeleteFunction] = useState<
+    ((name: string) => void) | undefined
+  >(undefined);
+
   return (
     <MainContext.Provider
       value={{
@@ -52,6 +67,10 @@ const MainContextWrapper = ({ children }: { children: React.ReactElement }) => {
         setNewGraph,
         newFunction,
         setNewFunction,
+        deleteGraph,
+        setDeleteGraph,
+        deleteFunction,
+        setDeleteFunction,
       }}
     >
       {children}

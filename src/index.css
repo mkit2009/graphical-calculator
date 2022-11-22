@@ -8,3 +8,8 @@ html,
 body {
   background: #222222;
 }
+
+.option {
+  background-color: transparent !important;
+  color: black;
+}

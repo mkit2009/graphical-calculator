@@ -283,10 +283,14 @@ let functions = {};
 function initFunctions() {
   let fns = {
     // vzor: "název": ["pouze pravá strana rovnice", {argument:základní_hodnota, ...}]
-    power: ["pow(x, a)", { a: 2 }],
-    sine: ["sin(x) + height", { height: 0 }],
-    constant: ["x", {}],
-    sinc: ["sin(x) / x * a", { a: 1 }],
+    // power: ["pow(x, a)", { a: 2 }],
+    // sine: ["sin(x) + height", { height: 0 }],
+    // constant: ["x", {}],
+    // sinc: ["sin(x) / x * a", { a: 1 }],
+
+    samplePow: ["pow(x, a)", { a: 0 }],
+    sampleSin: ["sin(x) + a", { a: 0 }],
+    sampleConstant: ["x", {}],
   };
   for (let i in fns) Function.create(i, fns[i][0], fns[i][1]);
 }
@@ -300,10 +304,10 @@ let graphs = {};
 // a zároveň: Graph.create("ahojoj", "sine", [1, 2, 3, 4], "green")
 // potom: a: 1, b: 2, d: 3, c: 4
 // pokud toto způsobilo ještě více zmatení, napiš mi xd
-Graph.create("ahoj", "power", [3], "red");
-Graph.create("ahojoj", "sine", [1], "green");
-Graph.create("ahojo", "constant", [], "blue");
-Graph.create("ahojsinco", "sinc", [10], "black");
+// Graph.create("ahoj", "power", [3], "red");
+// Graph.create("ahojoj", "sine", [1], "green");
+// Graph.create("ahojo", "constant", [], "blue");
+// Graph.create("ahojsinco", "sinc", [10], "black");
 
 function main() {
   Graph.drawTable();

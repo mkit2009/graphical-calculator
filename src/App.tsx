@@ -15,7 +15,7 @@ function App() {
       <Navbar />
       <StyledDiv>
         <GraphSidebar />
-        <main className="mx-auto">
+        <main className="mx-auto flex items-center">
           <Canvas />
         </main>
         <div></div>

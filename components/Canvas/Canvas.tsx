@@ -9,12 +9,25 @@ function Canvas() {
     undefined
   );
 
-  const { setNewFunction, setNewGraph } = useMainContext();
+  const {
+    setNewFunction,
+    setNewGraph,
+    setFunctionsArray,
+    setDeleteFunction,
+    setDeleteGraph,
+  } = useMainContext();
 
   async function importFromScript() {
     const { Graph, Function } = await import("../../static/lib/script");
     setNewFunctionState(() => Function.create);
     setNewGraphState(() => Graph.create);
+    setDeleteFunction(() => Function.remove);
+    setDeleteGraph(() => Graph.remove);
+    setFunctionsArray([
+      { name: "samplePow", body: 'pow(x, "a")', parametres: { a: 0 } },
+      { name: "sampleSin", body: 'sin(x) + "a"', parametres: { a: 0 } },
+      { name: "sampleConstant", body: "x", parametres: {} },
+    ]);
   }
 
   useEffect(() => {
