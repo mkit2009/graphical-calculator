@@ -48,7 +48,7 @@ export default function ColorPicker({
         }
         setPickedColor(color);
         setIsOpened(false);
-        return { ...old, [value]: color };
+        return { ...old, [value]: COLORS[color] };
       });
     }
   };

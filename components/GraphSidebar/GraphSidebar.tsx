@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineEdit } from "react-icons/ai";
 import Popup from "../Popup/Popup";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useMainContext } from "../../src/context/mainContext";
@@ -7,25 +7,39 @@ import { useMainContext } from "../../src/context/mainContext";
 const StyledDiv = ({
   title,
   detailed,
-  onClick,
+  onClickDelete,
+  onClickEdit,
 }: {
   title: string;
   detailed?: string;
-  onClick?: (...args: any) => void;
+  onClickDelete?: (...args: any) => void;
+  onClickEdit?: (...args: any) => void;
 }) => {
   return (
-    <div className="p-3 text-white bg-barelyVisibleWhite rounded-md flex items-center justify-between max-w-[350px]">
+    <div className="p-3 bg-slate-600 text-white dark:bg-barelyVisibleWhite rounded-md flex items-center justify-between max-w-[350px]">
       <div>
         <span className="text-lg whitespace-nowrap overflow-ellipsis overflow-hidden">
           {title}
         </span>
         {detailed && <p className="text-slate-400">{detailed}</p>}
       </div>
-      <div
-        className="flex items-center"
-        onClick={onClick ? () => onClick(title) : undefined}
-      >
-        <AiOutlineDelete className="text-4xl rounded-full p-1 hover:bg-barelyVisibleWhite cursor-pointer duration-150" />
+      <div className="flex flex-row gap-1">
+        {/* {onClickEdit && (
+          <div
+            className="flex items-center"
+            onClick={onClickEdit ? () => onClickEdit(title) : undefined}
+          >
+            <AiOutlineEdit className="text-4xl rounded-full p-1 hover:bg-barelyVisibleWhite cursor-pointer duration-150" />
+          </div>
+        )} */}
+        {onClickDelete && (
+          <div
+            className="flex items-center"
+            onClick={onClickDelete ? () => onClickDelete(title) : undefined}
+          >
+            <AiOutlineDelete className="text-4xl rounded-full p-1 hover:bg-barelyVisibleWhite cursor-pointer duration-150" />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -83,6 +97,8 @@ function GraphSidebar() {
       } catch (e) {}
     }
   };
+
+  const editGraphFunction = (name: string) => {};
 
   const handleFunctionForm = (inputArray: string[]) => {
     // Grabs the name from input form name
@@ -177,16 +193,16 @@ function GraphSidebar() {
 
   return (
     <>
-      <aside className="p-4 flex flex-col gap-8 overflow-x-hidden max-h-[650px]">
+      <aside className="p-4 flex flex-col gap-8 overflow-x-hidden max-h-[650px] shadow-xl rounded-md">
         <div>
           <div
-            className="flex items-center gap-3 justify-between text-fontColor text-2xl mb-2 sticky top-[-1rem] bg-[#222222]
+            className="flex items-center gap-3 justify-between text-black dark:text-fontColor text-2xl mb-2 sticky top-[-1rem] dark:bg-[#222222]
           p-1"
           >
             <p>Your Graphs</p>
             <AiOutlinePlus
               onClick={handleNewGraph}
-              className="text-4xl self-end rounded-full cursor-pointer duration-100 hover:bg-barelyVisibleWhite
+              className="text-4xl self-end rounded-full cursor-pointer duration-100 dark:hover:bg-barelyVisibleWhite hover:bg-slate-200
           hover:rotate-90"
             />
           </div>
@@ -200,24 +216,27 @@ function GraphSidebar() {
                     item.functionName,
                     item.arguments
                   )}
-                  onClick={deleteGraphFunction}
+                  onClickDelete={deleteGraphFunction}
+                  onClickEdit={editGraphFunction}
                 />
               );
             })}
             {graphsArray.length === 0 && (
-              <p className="text-white">You have no graphs yet.</p>
+              <p className="text-black dark:text-white">
+                You have no graphs yet.
+              </p>
             )}
           </div>
         </div>
         <div>
           <div
-            className="flex items-center gap-3 justify-between text-fontColor text-2xl mb-2 sticky top-[-1rem] bg-[#222222]
+            className="flex items-center gap-3 justify-between text-black dark:text-fontColor text-2xl mb-2 sticky top-[-1rem] dark:bg-[#222222]
           p-1"
           >
             <p>Your Functions</p>
             <AiOutlinePlus
               onClick={handleNewFunction}
-              className="text-4xl self-end rounded-full cursor-pointer duration-100 hover:bg-barelyVisibleWhite
+              className="text-4xl self-end rounded-full cursor-pointer duration-100 dark:hover:bg-barelyVisibleWhite hover:bg-slate-200
           hover:rotate-90"
             />
           </div>
@@ -228,12 +247,14 @@ function GraphSidebar() {
                   title={item.name}
                   detailed={item.body}
                   key={index}
-                  onClick={deleteFunctionFunction}
+                  onClickDelete={deleteFunctionFunction}
                 />
               );
             })}
             {functionsArray.length === 0 && (
-              <p className="text-white">You have no functions yet.</p>
+              <p className="text-black darl:text-white">
+                You have no functions yet.
+              </p>
             )}
           </div>
         </div>

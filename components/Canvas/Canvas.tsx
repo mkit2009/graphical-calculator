@@ -45,7 +45,8 @@ function Canvas() {
         id="canvas"
         width="650"
         height="650"
-        className="cursor-crosshair mx-auto shadow-static hover:shadow-staticBigger rounded-lg duration-200
+        className="cursor-crosshair mx-auto shadow-static dark:shadow-staticDark hover:shadow-staticBigger
+         dark:hover:shadow-staticBiggerDark rounded-lg duration-200
         w-full aspect-square max-w-[650px]"
       ></canvas>
     </>

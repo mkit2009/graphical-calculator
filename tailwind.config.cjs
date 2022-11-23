@@ -13,8 +13,10 @@ module.exports = {
         lobster: "Lobster, cursive",
       },
       boxShadow: {
-        static: "0 0 30px 0 #ffffff82",
-        staticBigger: "0 0 40px 0 #ffffffa2",
+        static: "0 0 30px 0 #00000082",
+        staticDark: "0 0 30px 0 #ffffff82",
+        staticBigger: "0 0 40px 0 #000000a2",
+        staticBiggerDark: "0 0 40px 0 #ffffffa2",
       },
       colors: {
         backgroundColor: "#222222",
