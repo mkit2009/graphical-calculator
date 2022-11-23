@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   type ForwardedRef,
   useMemo,
+  SetStateAction,
 } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useMainContext } from "../../src/context/mainContext";
@@ -77,7 +78,17 @@ const Popup = forwardRef(function Popup(
 
   const { functionsArray, graphsArray } = useMainContext();
 
-  console.log(values);
+  const closeAndResetForm = () => {
+    // const newValues: { [index: string]: "" } = {};
+    // for (let item of Object.keys(values)) {
+    //   newValues[item] = "";
+    // }
+    // setValues(
+    //   newValues as SetStateAction<{ [index: string]: "" } & FormEvent<Element>>
+    // );
+    resetForm();
+    closeFunction();
+  };
 
   return (
     <dialog
@@ -87,15 +98,16 @@ const Popup = forwardRef(function Popup(
     >
       <AiOutlineClose
         className="text-4xl ml-auto mb-5 hover:bg-slate-200 dark:hover:bg-gray-700 rounded-full p-1 cursor-pointer duration-75"
-        onClick={() => {
-          resetForm();
-          closeFunction();
-        }}
+        onClick={closeAndResetForm}
       />
 
       <form
         className="flex flex-col gap-4"
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          handleSubmit(e);
+          setTimeout(() => resetForm(), 0);
+        }}
+        onSubmitCapture={() => {}}
         onChange={() => setErrorMessage("")}
       >
         {dataType === "function" &&
@@ -221,6 +233,7 @@ const Popup = forwardRef(function Popup(
                     }
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    values={values}
                     setValueFunction={setValues}
                   />
                 )}

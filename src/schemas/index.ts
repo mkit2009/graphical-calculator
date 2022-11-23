@@ -12,6 +12,6 @@ export const functionSchema = yup.object().shape({
 export const graphSchema = yup.object().shape({
   "Graphname-name": yup.string().required("This field is required"),
   "Graphfunciton-name": yup.string().required("You must select an option"),
-  "Graphcolor-name": yup.string().required("Insert a valid color exporession"),
+  "Graphcolor-name": yup.string().required("Pick a color"),
   "number": yup.number().optional()
 });
